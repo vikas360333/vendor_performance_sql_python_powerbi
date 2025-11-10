@@ -19,6 +19,15 @@ Data Visualization- Matplotlib and Seaborn
 statistical analysis- SciPy (scipy.stats)  
 Analytical Tools- Power BI  
 
+## Methods
+- Data Loading / Ingestion  
+- Database Creation: SQLite database (inventory.db).  
+- Data Cleaning & Preparation: Handled missing values, created calculated columns  
+- Exploratory Data Analysis (EDA)  
+- Business Insights & Visualization: Pareto chart, scatter plots, donut chart  
+- Statistical Analysis: confidence intervals, t-test  
+- Documentation & Logging: logging for ingestion, cleaning, and processing  
+
 ## Key Insights
 1. Top 10 vendors accounted for the majority of total purchases and sales revenue — confirming vendor concentration.
 2. Low-performing vendors showed low stock turnover (<1), meaning excess inventory and slow-moving products.
@@ -28,10 +37,6 @@ Analytical Tools- Power BI
 6. Statistical test results (t-test) showed a significant difference in profit margins between top-performing and low-performing vendors.
 
 ## Conclusion
-1. The analysis helped prioritize profitable and efficient vendors while flagging those with low sales or high inventory risk.
-2. Provided actionable insights to improve purchasing decisions, reduce holding costs, and enhance overall profitability.
-3.Demonstrated how data-driven vendor management can directly impact business performance and supply chain efficiency.
-
-Bulk purchase advantage observed — vendors offering larger quantities had lower unit purchase costs.
-
-Statistical test results (t-test) showed a significant difference in profit margins between top-performing and low-performing vendors.
+- The analysis helped prioritize profitable and efficient vendors while flagging those with low sales or high inventory risk.  
+- Provided actionable insights to improve purchasing decisions, reduce holding costs, and enhance overall profitability.  
+- Demonstrated how data-driven vendor management can directly impact business performance and supply chain efficiency.  
