@@ -1,0 +1,81 @@
+import sqlite3
+import pandas as pd
+import logging
+
+logging.basicConfig(
+    filename="logs/get_vendor_summary.log",
+    level=logging.DEBUG,
+    format="%(asctime)s - %(levelname)s - %(message)s",
+    filemode="a"
+)
+def ingest_db(df,table_name, engine):
+    '''this function will ingest the df into database table'''
+    df.to_sql(table_name, con = engine, if_exists= 'replace', index=False)
+
+
+def create_vendor_summary(conn):
+    '''this function will merge the different tables to get the overall vendor summary and adding new columns in the resultant data'''
+    vendor_sales_summary= pd.read_sql_query("""with freightsummary as (
+    select VendorNumber,sum(freight) as freightcost
+    from vendor_invoice
+    group by VendorNumber
+    ),
+
+    purchasesummary as (
+select p.VendorNumber,p.VendorName,p.Brand,p.Description,p.PurchasePrice,pp.Volume,pp.Price as actual_price,
+sum(p.Quantity) as totpurchasequantity, sum(p.Dollars) as totpurchasedollar from purchases p
+join purchase_prices pp on p.brand = pp.brand
+where p.PurchasePrice >0
+group by p.VendorNumber, p.VendorName, p.Brand,p.Description,p.PurchasePrice,pp.Price, pp.Volume
+),
+salesummary as (
+select VendorNo,Brand,sum(SalesDollars) as totsalesdollar,
+sum(SalesPrice) as totsalesprice,sum(SalesQuantity) as totsalesquantity,
+sum(ExciseTax) as totexcisetax from sales
+group by VendorNo, Brand
+)
+select ps.VendorNumber, ps.VendorName,ps.Brand,ps.Description,ps.PurchasePrice,ps.actual_price,ps.Volume,
+ps.totpurchasequantity,ps.totpurchasedollar, ss.totsalesdollar, ss.totsalesprice, ss.totsalesquantity,
+ss.totexcisetax, fs.freightcost
+from purchasesummary ps
+left join salesummary ss on ps.VendorNumber =ss.VendorNo And ps.Brand = ss.Brand
+left join freightsummary fs on ps.VendorNumber = fs.VendorNumber
+order by ps.totpurchasedollar desc
+""",conn)
+    return vendor_sales_summary
+
+def clean_data(df):
+    '''this function will clean the data'''
+    # changing datatype to float
+    df['Volume']=df['Volume'].astype('float')
+    #filling missing value with 0
+    df.fillna(0,inplace=True)
+
+    #remove spaces from categorical columns
+    df['VendorName']=df['VendorName'].str.strip()
+    df['Description']=df['Description'].str.strip()
+
+    #creating new columns for better analysis
+    vendor_sales_summary['Grossprofit']=vendor_sales_summary['totsalesdollar']-vendor_sales_summary['totpurchasedollar']
+    vendor_sales_summary['profitMargin']= (vendor_sales_summary['Grossprofit']/ vendor_sales_summary['totsalesdollar'])*100
+    vendor_sales_summary['stockturnover']= vendor_sales_summary['totsalesquantity']/vendor_sales_summary['totpurchasequantity']
+    vendor_sales_summary['salestopurchase_ratio']= vendor_sales_summary['totsalesdollar']/vendor_sales_summary['totpurchasedollar']
+    
+    
+    return df
+
+if __name__ == '__main__':
+    # creating database connection
+    conn = sqlite3.connect('inventory.db')
+
+    logging.info('creating vendor summary table......')
+    summary_df = create_vendor_summary(conn)
+    logging.info(summary_df.head())
+
+    logging.info('cleaning data....')
+    clean_df= clean_data(summary_df)
+    logging.info(clean_df.head())
+
+    logging.info('ingestion data......')
+    ingest_db(clean_df,'vendor_sales_summary',conn)
+    logging.info('completed')
