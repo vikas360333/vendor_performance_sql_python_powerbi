@@ -3,11 +3,11 @@
 “This analysis helped the business identify profitable vendors, optimize inventory, improve purchase strategies, and make data-driven procurement decisions — ultimately reducing costs and improving profit margins.”
 
 ## Problem Statement
--Management didn’t know which vendors were truly profitable versus those driving losses
--Large amounts of capital were tied up in slow-moving or unsold inventory, hurting cash flow.
--The company lacked clarity on how bulk purchasing affected pricing and margins.
--Some brands had low sales volume but high profit margins, and management didn’t know whether to promote or discontinue them.
--Business decisions were previously based on intuition rather than facts.
+-Management didn’t know which vendors were truly profitable versus those driving losses. 
+-Large amounts of capital were tied up in slow-moving or unsold inventory, hurting cash flow. 
+-The company lacked clarity on how bulk purchasing affected pricing and margins. 
+-Some brands had low sales volume but high profit margins, and management didn’t know whether to promote or discontinue them. 
+-Business decisions were previously based on intuition rather than facts. 
 
 ## Dataset
 I have used four csv file sales, purchase, purchase_price, vendor_invoice.
